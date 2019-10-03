@@ -115,7 +115,7 @@ void loop() {
 
 	unsigned long waitStart = millis();
 	for (int j = 0; j < NUMMCELLS; j++) {  // wait for data being available on all ADC's
-		while (digitalRead(dStart_pin + j) && millis()<waitStart);
+		while (digitalRead(dStart_pin + j));
 	}
 
 	for (uint8_t i = 0; i < (24 + GAIN); i++) { // read 24 bit data + set gain and start next conversion

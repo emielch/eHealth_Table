@@ -1,7 +1,7 @@
 #include "QuickStats.h"
 
 #define NUMSAMPLES 10
-#define NUMMCELLS 50
+#define NUMMCELLS 67
 QuickStats stats; //initialize an instance of this class
 
 double dataAvg[NUMMCELLS + 1];
