@@ -96,6 +96,7 @@ void setup() {
 
 int counter = 0;
 unsigned long measureTime = 0;
+unsigned long lastSampleTime = 0;
 
 
 void loop() {
@@ -113,10 +114,13 @@ void loop() {
 		data[j] = 0;
 	}
 
-	unsigned long waitStart = millis();
-	for (int j = 0; j < NUMMCELLS; j++) {  // wait for data being available on all ADC's
-		while (digitalRead(dStart_pin + j));
-	}
+
+	//for (int j = 0; j < NUMMCELLS; j++) {  // wait for data being available on all ADC's
+	//	while (digitalRead(dStart_pin + j));
+	//}
+
+	while (millis() < lastSampleTime + 14);
+	lastSampleTime = millis();
 
 	for (uint8_t i = 0; i < (24 + GAIN); i++) { // read 24 bit data + set gain and start next conversion
 		delayMicroseconds(1); // required for faster mcu's?

@@ -1,23 +1,24 @@
 #include "QuickStats.h"
 
 #define NUMSAMPLES 10
-#define NUMMCELLS 67
+#define CELLSPERPORT 67
+#define NUMMCELLS CELLSPERPORT*3
 QuickStats stats; //initialize an instance of this class
 
-double dataAvg[NUMMCELLS + 1];
-float loadData[NUMMCELLS + 1];
+double dataAvg[NUMMCELLS];
+float loadData[NUMMCELLS];
 
-unsigned long data[NUMSAMPLES][NUMMCELLS + 1];
+unsigned long data[NUMSAMPLES][NUMMCELLS];
 int currSample = 0;
-
-
-
-String inputString = "";
-int dataSerialPos = 0;
+bool newdata1;
+bool newdata2;
+bool newdata3;
 
 
 void setup() {
 	Serial1.begin(2000000);
+	Serial2.begin(2000000);
+	Serial3.begin(2000000);
 }
 
 
@@ -40,15 +41,51 @@ void checkSerial() {
 		int startChar = Serial1.read();
 		if (startChar == '%') {
 			// receive the data
-			int count = Serial1.readBytes((char *)data[currSample], sizeof(unsigned long)*NUMMCELLS);
-			if (count == sizeof(unsigned long)*NUMMCELLS) {
-				currSample++;
-				if (currSample >= NUMSAMPLES) currSample = 0;
-				counter++;
-				newData();
+			int count = Serial1.readBytes((char *)data[currSample], sizeof(unsigned long)*CELLSPERPORT);
+			if (count == sizeof(unsigned long)*CELLSPERPORT) {
+				newdata1 = true;
 			}
 		}
 	}
+
+	while (Serial2.available()) {
+		int startChar = Serial2.read();
+		if (startChar == '%') {
+			// receive the data
+			int count = Serial2.readBytes((char *)data[currSample]+ sizeof(unsigned long)*CELLSPERPORT, sizeof(unsigned long)*CELLSPERPORT);
+			if (count == sizeof(unsigned long)*CELLSPERPORT) {
+				newdata2 = true;
+			}
+		}
+	}
+
+	while (Serial3.available()) {
+		int startChar = Serial3.read();
+		if (startChar == '%') {
+			// receive the data
+			int count = Serial3.readBytes((char *)data[currSample]+ sizeof(unsigned long)*CELLSPERPORT *2, sizeof(unsigned long)*CELLSPERPORT);
+			if (count == sizeof(unsigned long)*CELLSPERPORT) {
+				newdata3 = true;
+			}
+		}
+	}
+
+	if (newdata1 && newdata2 && newdata3) {
+		newdata1 = false;
+		newdata2 = false;
+		newdata3 = false;
+		currSample++;
+		if (currSample >= NUMSAMPLES) currSample = 0;
+
+		//for (int j = 0; j < NUMMCELLS; j++) {
+		//	Serial.print(data[currSample][j]);
+		//	Serial.print('\t');
+		//}
+		//Serial.println();
+		//counter++;
+		newData();
+	}
+
 }
 
 //void printData() {
@@ -87,8 +124,11 @@ void newData() {
 			if (iqr < 4) {
 				dataAvg[j] = dataAvg[j] * 0.997 + val * 0.003;
 			}
-			loadData[j] = (val - dataAvg[j])*0.0005;
-			Serial.print(loadData[j]*5000+5000);
+			loadData[j] = (val - dataAvg[j])*0.005;
+			Serial.print(loadData[j]);
+			Serial.print('\t');
+		}else {
+			Serial.print(0);
 			Serial.print('\t');
 		}
 	}
