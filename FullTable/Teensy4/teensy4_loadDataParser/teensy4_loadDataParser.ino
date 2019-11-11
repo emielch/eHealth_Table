@@ -18,7 +18,7 @@ bool newdata1;
 bool newdata2;
 bool newdata3;
 
-bool continuousCalibration = true;
+bool continuousCalibration = false;
 bool streamData = false;
 
 HardwareSerial* loadSer1 = &Serial1;
