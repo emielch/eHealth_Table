@@ -154,7 +154,7 @@ void newData() {
 
 		if (!isnan(val)) {
 			if (continuousCalibration && iqr < 4) {
-				dataAvg[k] = dataAvg[k] * 0.999 + val * 0.001;
+				dataAvg[k] = dataAvg[k] * 0.995 + val * 0.005;
 			}
 			loadData[k] = (val - dataAvg[k])*0.005;
 			/*Serial.print(loadData[k]);
