@@ -20,18 +20,19 @@ bool newdata3;
 
 bool continuousCalibration = false;
 bool streamData = false;
+bool streamDataToLeds = false;
 
 HardwareSerial* loadSer1 = &Serial1;
 HardwareSerial* loadSer2 = &Serial3;
 HardwareSerial* loadSer3 = &Serial4;
-//HardwareSerial* ledSer = &Serial6;
+HardwareSerial* ledSer = &Serial6;
 
 
 void setup() {
 	loadSer1->begin(2000000);
 	loadSer2->begin(2000000);
 	loadSer3->begin(2000000);
-	//ledSer->begin(2000000);
+	ledSer->begin(2000000);
 
 	loadAvg();
 }
@@ -75,12 +76,22 @@ void checkUSBSerial() {
 		else if (inChar == 'f') {
 			streamData = false;
 		}
-
 	}
 }
 
 
 void checkSerial() {
+	while (ledSer->available()) {
+		char inChar = ledSer->read();
+
+		if (inChar == 'd') {
+			streamDataToLeds = true;
+		}
+		else if (inChar == 'f') {
+			streamDataToLeds = false;
+		}
+	}
+
 	while (loadSer1->available()) {
 		int startChar = loadSer1->read();
 		if (startChar == '%') {
@@ -156,7 +167,7 @@ void newData() {
 			if (continuousCalibration && iqr < 4) {
 				dataAvg[k] = dataAvg[k] * 0.995 + val * 0.005;
 			}
-			loadData[k] = (val - dataAvg[k])*0.005;
+			loadData[k] = (val - dataAvg[k])*0.005;   // calibration factor should be 0.260039493478523 for grams, but varies between load cells
 			/*Serial.print(loadData[k]);
 			Serial.print('\t');*/
 		}
@@ -171,6 +182,11 @@ void newData() {
 		Serial.print('%');
 		Serial.write((char*)loadData, sizeof(loadData));
 		Serial.print('#');
+	}
+	if (streamDataToLeds) {
+		ledSer->print('%');
+		ledSer->write((char*)loadData, sizeof(loadData));
+		ledSer->print('#');
 	}
 }
 
