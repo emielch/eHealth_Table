@@ -1,3 +1,12 @@
+/*
+- Increase Serial buffers in "Arduino\hardware\teensy\avr\cores\teensy4"
+	SERIAL1_RX_BUFFER_SIZE to 1024 in HardwareSerial1.cpp
+	SERIAL3_RX_BUFFER_SIZE to 1024 in HardwareSerial3.cpp
+	SERIAL4_RX_BUFFER_SIZE to 1024 in HardwareSerial4.cpp
+	SERIAL6_TX_BUFFER_SIZE to 1024 in HardwareSerial6.cpp
+*/
+
+
 #include "QuickStats.h"
 #include <EEPROM.h>
 
@@ -22,10 +31,10 @@ bool continuousCalibration = false;
 bool streamData = false;
 bool streamDataToLeds = false;
 
-HardwareSerial* loadSer1 = &Serial1;
-HardwareSerial* loadSer2 = &Serial3;
-HardwareSerial* loadSer3 = &Serial4;
-HardwareSerial* ledSer = &Serial6;
+HardwareSerial* loadSer1 = &Serial1;   // increase SERIAL1_RX_BUFFER_SIZE to 1024
+HardwareSerial* loadSer2 = &Serial3;   // increase SERIAL3_RX_BUFFER_SIZE to 1024
+HardwareSerial* loadSer3 = &Serial4;   // increase SERIAL4_RX_BUFFER_SIZE to 1024
+HardwareSerial* ledSer = &Serial6;     // increase SERIAL6_TX_BUFFER_SIZE to 1024
 
 
 void setup() {
